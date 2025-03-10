@@ -1,0 +1,64 @@
+<div class="sidebar" [class.mobile-open]="isMobileOpen">
+  <div class="sidebar-content">
+    <ul class="sidebar-menu">
+      @for (parent of parents_menu; track parent.id) {
+        <li class="nav-item" [class.active]="parent.isOpen">
+          @if (parent.children.length > 0 && parent.menu_url === '') {
+            <a (click)="toggleDropdown(parent)" class="nav-link has-dropdown">
+              <div class="nav-icon">
+                <i class="{{ parent.icon }}"></i>
+              </div>
+              <span class="nav-text">{{ parent.menu_name }}</span>
+              <div class="dropdown-indicator">
+                <i class="bi" [ngClass]="parent.isOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+              </div>
+            </a>
+            <ul class="submenu" [class.show]="parent.isOpen">
+              @for (child of parent.children; track child.id) {
+                <li class="submenu-item">
+                  <a routerLink="{{ child.menu_url }}" routerLinkActive="active-link" class="submenu-link" (click)="closeMobileSidebar()">
+                    <div class="submenu-icon">
+                      <i class="{{ child.icon }}"></i>
+                    </div>
+                    <span class="submenu-text">{{ child.menu_name }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          } @else {
+            <a routerLink="{{ parent.menu_url }}" routerLinkActive="active-link" class="nav-link" (click)="closeMobileSidebar()">
+              <div class="nav-icon">
+                <i class="{{ parent.icon }}"></i>
+              </div>
+              <span class="nav-text">{{ parent.menu_name }}</span>
+            </a>
+          }
+        </li>
+      }
+      @empty {
+        <li class="empty-menu">
+          <div class="empty-icon">
+            <i class="bi bi-exclamation-circle"></i>
+          </div>
+          <span>No menu items available</span>
+        </li>
+      }
+    </ul>
+  </div>
+  
+  <!-- Logout Button -->
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="this.GSD.global.logout('clear')">
+      <i class="bi bi-box-arrow-right"></i>
+      <span class="logout-text">Log Out</span>
+    </button>
+  </div>
+</div>
+
+<!-- Mobile sidebar toggle button -->
+<button class="sidebar-toggle" (click)="toggleMobileSidebar()">
+  <i class="bi" [ngClass]="isMobileOpen ? 'bi-x-lg' : 'bi-list'"></i>
+</button>
+
+<!-- Overlay for mobile sidebar -->
+<div class="sidebar-overlay" [class.show]="isMobileOpen" (click)="closeMobileSidebar()"></div>

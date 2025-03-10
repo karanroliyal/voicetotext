@@ -1,0 +1,156 @@
+<div class="container-fluid">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">User Permissions</h4>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#assignPermissionModal">
+        <i class="bi bi-plus-lg me-2"></i>Assign Permission
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-12 col-md-4">
+          <label class="form-label">Select User</label>
+          <select class="form-select" #user_id (change)="checkPermission(user_id.value)">
+            <option value="0">Select User</option>
+            <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="text-center my-4" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Permissions Table -->
+  <div class="card" *ngIf="showDetails && !isLoading">
+    <div class="table-responsive">
+      <table class="table permissions-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th class="text-center">View</th>
+            <th class="text-center">Create</th>
+            <th class="text-center">Edit</th>
+            <th class="text-center">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <form [formGroup]="permissionForm">
+            <ng-container formArrayName="permission_data">
+              <tr *ngFor="let permission of permission_data.controls; let i = index" [formGroupName]="i">
+                <td>
+                  <div class="module-info">
+                    <i class="bi bi-grid module-icon"></i>
+                    <div>
+                      <input type="text" class="form-control-plaintext" formControlName="menu_name" readonly>
+                      <input type="hidden" formControlName="menu_id">
+                      <input type="hidden" formControlName="user_id">
+                    </div>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input class="form-check-input" type="checkbox" formControlName="view_page">
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input class="form-check-input" type="checkbox" formControlName="add_records">
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input class="form-check-input" type="checkbox" formControlName="update_records">
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="form-check d-flex justify-content-center">
+                    <input class="form-check-input" type="checkbox" formControlName="delete_records">
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </form>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="card-footer">
+      <button class="btn btn-primary" (click)="submit()" [disabled]="isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Save Permissions
+      </button>
+    </div>
+  </div>
+
+  <!-- Assign Permission Modal -->
+  <div class="modal fade" id="assignPermissionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Assign Permission</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="permissionForm">
+            <div class="mb-3">
+              <label class="form-label">Select User</label>
+              <select class="form-select" formControlName="user_id">
+                <option value="">Choose user</option>
+                <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Select Module</label>
+              <select class="form-select" formControlName="module_id">
+                <option value="">Choose module</option>
+                <option *ngFor="let module of modules" [value]="module.id">{{ module.menu_name }}</option>
+              </select>
+            </div>
+            <div class="permission-checkboxes">
+              <label class="form-label">Permissions</label>
+              <div class="permission-grid">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="viewPermission" formControlName="view_rights">
+                  <label class="form-check-label" for="viewPermission">View</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="createPermission" formControlName="add_rights">
+                  <label class="form-check-label" for="createPermission">Create</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="editPermission" formControlName="update_rights">
+                  <label class="form-check-label" for="editPermission">Edit</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="deletePermission" formControlName="delete_rights">
+                  <label class="form-check-label" for="deletePermission">Delete</label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="assignPermission()" [disabled]="isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Assign Permissions
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

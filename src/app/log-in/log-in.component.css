@@ -1,0 +1,255 @@
+.log-outer-container {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+/* Left side - Login form */
+.login-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 450px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 2rem;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo-img {
+    width: 180px;
+    margin-bottom: 1.5rem;
+}
+
+.login-title {
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.login-body {
+    padding: 0.5rem 0;
+}
+
+/* Form Group with Fixed Height */
+.form-group {
+    margin-bottom: 1.5rem;
+    min-height: 85px; /* Fixed height to accommodate label + input + validation message */
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.input-group {
+    margin-bottom: 0.25rem;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+    padding: 0.75rem;
+}
+
+.form-control {
+    border-left: none;
+    padding: 0.75rem 1rem;
+    border-radius: 0 8px 8px 0;
+    height: 45px; /* Fixed height for inputs */
+}
+
+.input-group .form-control:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+/* Validation Message Styles */
+.validation-message {
+    font-size: 0.8rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+    min-height: 20px; /* Fixed height for validation message */
+    display: block;
+}
+
+.login-btn {
+    background: linear-gradient(135deg, #4a6bff 0%, #2541b8 100%);
+    color: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    height: 45px; /* Fixed height for button */
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #3a5bef 0%, #1531a8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 107, 255, 0.3);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+/* Right side - Image and welcome text */
+.login-image-container {
+    flex: 1;
+    background: linear-gradient(135deg, #4a6bff 0%, #2541b8 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-image-content {
+    text-align: center;
+    color: white;
+    z-index: 1;
+    padding: 2rem;
+}
+
+.welcome-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.welcome-description {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.login-image {
+    max-width: 80%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive design */
+@media screen and (max-width: 992px) {
+    .login-image-container {
+        display: none;
+    }
+    
+    .login-container {
+        flex: 1;
+    }
+    
+    .login-card {
+        max-width: 400px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .login-card {
+        max-width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 1.5rem;
+    }
+    
+    .log-outer-container {
+        background-color: #ffffff;
+    }
+    
+    .login-container {
+        padding: 1rem;
+    }
+
+    .form-group {
+        min-height: 80px; /* Slightly reduced for mobile */
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .login-card {
+        padding: 1rem;
+    }
+    
+    .logo-img {
+        width: 150px;
+    }
+    
+    .login-title {
+        font-size: 1.5rem;
+    }
+    
+    .login-container {
+        padding: 0.5rem;
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+    
+    .form-control, .input-group-text {
+        font-size: 0.9rem;
+    }
+    
+    .login-btn {
+        padding: 0.6rem;
+    }
+
+    .form-group {
+        min-height: 75px; /* Further reduced for small mobile */
+    }
+}
+
+@media screen and (max-height: 600px) {
+    .login-header {
+        margin-bottom: 1rem;
+    }
+    
+    .logo-img {
+        width: 120px;
+        margin-bottom: 0.75rem;
+    }
+    
+    .login-title {
+        font-size: 1.3rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .login-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+        min-height: 70px; /* Reduced for low height screens */
+    }
+    
+    .form-control {
+        padding: 0.5rem 0.75rem;
+        height: 40px;
+    }
+}

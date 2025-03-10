@@ -1,0 +1,129 @@
+.navbar {
+    background: linear-gradient(135deg, #2b4cca 0%, #3f6fff 100%);
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+/* Logo and brand section */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 30px;
+    width: auto;
+}
+
+.brand-divider {
+    height: 30px;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin: 0 1rem;
+}
+
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Actions section */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.action-item, .notification-badge {
+    display: none;
+}
+
+/* User profile section */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 30px;
+    transition: background-color 0.2s;
+}
+
+.user-profile:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+
+.user-role {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .brand-title, .user-info {
+        display: none;
+    }
+    
+    .brand-divider {
+        display: none;
+    }
+    
+    .navbar {
+        padding: 0 1rem;
+        height: 60px;
+    }
+    
+    .navbar-actions {
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .action-item {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .profile-img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .logo-img {
+        height: 30px;
+    }
+    
+    .navbar {
+        height: 55px;
+    }
+    
+    .navbar-actions {
+        gap: 0.5rem;
+    }
+}

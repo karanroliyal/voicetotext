@@ -1,0 +1,17 @@
+<label *ngIf="control && control.invalid && (control.dirty || control.touched)" class="text-danger message">
+    <label *ngIf="control.hasError('required')">
+        {{ name}} {{ "is required"}}
+    </label>
+    <label *ngIf="control.hasError('minlength') && !control.hasError('required')">
+        {{ name }} must be at least {{ minlength }} characters long.
+    </label>
+    <label *ngIf="control.hasError('maxlength') && !control.hasError('required') && !control.hasError('minlength')">
+        {{ name }} maximum {{ minlength }} characters allowed.
+    </label>
+    <label *ngIf="control.hasError('email') &&!control.hasError('required') &&!control.hasError('minlength')"> 
+        {{ name }} is not a valid email address.
+    </label>
+    <label *ngIf="control.hasError('pattern') &&!control.hasError('required') &&!control.hasError('minlength') &&!control.hasError('email')"> 
+        {{ name }} must have atleast one special char and one digit 
+    </label>
+</label>
