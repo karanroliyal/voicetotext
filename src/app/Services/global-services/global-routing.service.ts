@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { environment } from '../../../environment/environment'
-import { Router } from '@angular/router';
-// import { jwtDecode } from 'jwt-decode';
+import { ActivatedRoute, Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 // import * as CryptoJS from 'crypto-js';
 // const baseUrl = environment.base_url;
 const serverURL = environment.server_url;
@@ -11,7 +11,7 @@ const serverURL = environment.server_url;
   providedIn: 'root',
 })
 export class GlobalRoutingService {
-  constructor(private http: HttpClient, public router: Router) {}
+  constructor(private http: HttpClient, public router: Router, public currentRoute: ActivatedRoute) { }
 
   clearStorangeData() {
     localStorage.clear();
@@ -30,50 +30,44 @@ export class GlobalRoutingService {
     return localStorage.getItem(key);
   }
 
-  // decodeToken(): any {
-  //   try {
-  //     let token: any = localStorage.getItem('token');
-  //     return jwtDecode(token);
-  //   } catch (error) {
-  //     console.error('Error decoding JWT token:', error);
-  //     return null;
-  //   }
-  // }
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
 
-  // private encryptionKey = 'kiShAn22()3';
+  // Function to decode JWT token
+  decodeToken(): any {
+    const token = this.getToken();
+    if (token) {
+      try {
+        return jwtDecode(token); // Decode and return payload
+      } catch (error) {
+        console.error('Error decoding JWT:', error);
+        return null;
+      }
+    }
+    return null;
+  }
 
-  // encrypt(data: any): string {
-  //   const encryptedData = CryptoJS.AES.encrypt(
-  //     JSON.stringify(data),
-  //     this.encryptionKey
-  //   ).toString();
-  //   return encryptedData;
-  // }
-
-  // decrypt(encryptedData: string): any {
-  //   const decryptedBytes = CryptoJS.AES.decrypt(
-  //     encryptedData,
-  //     this.encryptionKey
-  //   );
-  //   const decryptedData = JSON.parse(
-  //     decryptedBytes.toString(CryptoJS.enc.Utf8)
-  //   );
-  //   return decryptedData;
-  // }
 
   api(controllerName: any, method: any, data: any = {}, callback: Function) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Accept': 'application/json'
-      })
-    };
-    
-    // Add token to headers if available
+
+    let headers = new HttpHeaders({
+      'Accept': 'application/json',
+    });
+
+
     const token = this.getFromLocalStorage('token');
-    if (token) {
-      httpOptions.headers = httpOptions.headers.set('Authorization', 'Bearer ' + token);
+
+    if (token && controllerName != 'login') {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+      headers = headers.set('myurl', this.router.url.split('/')[2]);
     }
-    
+
+
+    let httpOptions = { headers };
+
+    // console.log('Headers:', headers.keys()); // Debugging
+
     var response = this.http.post(serverURL + controllerName + '/' + method, data, httpOptions);
     response.subscribe({
       next: (res: any) => {
@@ -85,6 +79,7 @@ export class GlobalRoutingService {
         }
       },
       error: (error) => {
+        // console.error('API Error:', error); // Debugging
         if (error.status === 401) {
           this.clearStorangeData();
           this.router.navigate(['log-In']);
@@ -95,16 +90,21 @@ export class GlobalRoutingService {
   }
 
   permissions: any = {};
-  checkPermissions(module: any, callback: any = '') {
+  checkPermissions(table_name: string, callback: any = '') {
     let $this = this;
     this.permissions = {
-      'VIEW_RIGHT': 0,
-      'ADD_RIGHT': 0,
-      'EDIT_RIGHT': 0,
-      'DELETE_RIGHT': 0,
+      'add_rights': 0,
+      'view_rights': 0,
+      'update_rights': 0,
+      'delete_rights': 0,
     };
-    
-    this.api('user_rights', 'get_user_rights', { 'module': module }, function (res: any) {
+
+    let formData = new FormData();
+
+    formData.append('table_name', table_name)
+    formData.append('action', 'get rights')
+
+    this.api('crud', 'get_user_rights', formData, function (res: any) {
       if (res.statusCode == 200) {
         $this.permissions = res.data;
       }
@@ -112,5 +112,32 @@ export class GlobalRoutingService {
         callback();
       }
     });
+    // return this.permissions;
   }
 }
+
+
+
+
+
+
+// private encryptionKey = 'kiShAn22()3';
+
+// encrypt(data: any): string {
+//   const encryptedData = CryptoJS.AES.encrypt(
+//     JSON.stringify(data),
+//     this.encryptionKey
+//   ).toString();
+//   return encryptedData;
+// }
+
+// decrypt(encryptedData: string): any {
+//   const decryptedBytes = CryptoJS.AES.decrypt(
+//     encryptedData,
+//     this.encryptionKey
+//   );
+//   const decryptedData = JSON.parse(
+//     decryptedBytes.toString(CryptoJS.enc.Utf8)
+//   );
+//   return decryptedData;
+// }

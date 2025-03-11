@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { globalServicesDecorator } from '../../../Services/global-services.decorator';
 
 @Component({
   selector: 'app-header',
@@ -7,5 +8,16 @@ import { Component } from '@angular/core';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
+
+  user_name : string = '';
+
+  constructor(private GSD: globalServicesDecorator ) {
+
+    this.user_name = this.GSD.globalRouting.decodeToken().data.user_name;
+
+  }
+
+  
+
 
 }

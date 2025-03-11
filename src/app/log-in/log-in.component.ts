@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { FormValidationMessagesComponent } from '../Utility/form-validation-messages/form-validation-messages.component';
 import { globalServicesDecorator } from '../Services/global-services.decorator';
+import { json } from 'express';
 
 @Component({
   selector: 'app-log-in',
@@ -36,7 +37,11 @@ export class LogInComponent {
           if (res.statusCode == 200) {
             this.GSD.globalRouting.setAuthData(res.data, 'token');
             this.router.navigate(['/layout/home']);
+            setTimeout(()=>{
+              this.get_menu();
+            },20)
           } else {
+            console.log('kshsdsd');
             this.GSD.global.toast(res.message, 'danger');
           }
         });
@@ -44,4 +49,24 @@ export class LogInComponent {
       this.logInForm.markAllAsTouched();
     }
   }
+
+
+  get_menu(){
+
+    const formdata = new FormData();
+
+    formdata.append('action' , 'get menu');
+    formdata.append('table_name' , 'menu_master');
+
+    this.GSD.globalRouting.api('menu', 'get_menu', formdata,
+      (res: any) => {
+
+        localStorage.setItem('menu' , JSON.stringify(res.data))
+
+      }
+    )
+
+  }
+
+
 }

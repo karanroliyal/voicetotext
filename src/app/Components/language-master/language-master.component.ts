@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { globalServicesDecorator } from '../../Services/global-services.decorator';
@@ -22,9 +22,11 @@ export class LanguageMasterComponent implements OnInit {
   totalPages: number = 0;
   recordsPerPage: number = 4;
   Math = Math;
-  res:any;
-  
-  constructor(private GSD: globalServicesDecorator) {
+  res: any;
+  permission: any;
+ 
+
+  constructor(private GSD: globalServicesDecorator  ,  private cdr: ChangeDetectorRef) {
   }
   languageForm = new FormGroup({
     id: new FormControl(''),
@@ -33,7 +35,7 @@ export class LanguageMasterComponent implements OnInit {
     action: new FormControl('insert'),
     table_name: new FormControl('language_master')
   });
-  
+
   filterForm = new FormGroup({
     language_name: new FormControl(''),
     language_code: new FormControl(''),
@@ -44,32 +46,35 @@ export class LanguageMasterComponent implements OnInit {
     current_page: new FormControl(1),
     fields: new FormControl('id , language_name , language_code'),
     table_name: new FormControl('language_master'),
-    action: new FormControl('get_records')
+    action: new FormControl('get table')
   });
-  
+
+
   ngOnInit(): void {
     this.loadLanguages();
-    this.checkPermissions();
     this.setupTabListeners();
+    this.checkPermissions();
   }
-  
+
+
+
   private setupTabListeners(): void {
     // Add event listener for tab changes
     document.getElementById('all-languages-tab')?.addEventListener('shown.bs.tab', () => {
       this.resetForm();
     });
   }
-  
+
   checkPermissions(): void {
     this.GSD.globalRouting.checkPermissions('language_master', () => {
-      // Set permissions for UI elements
+      this.permission = this.GSD.globalRouting.permissions;
+      this.cdr.detectChanges();
     });
   }
-  
+
   loadLanguages(): void {
     const formData = this.GSD.globalFunction.convertToFormdata(this.filterForm);
-    
-    this.GSD.globalRouting.api('crud', 'table_creator', formData, 
+    this.GSD.globalRouting.api('crud', 'table_creator', formData,
       (res: any) => {
         if (res.records !== undefined) {
           this.languages = res.records;
@@ -88,18 +93,19 @@ export class LanguageMasterComponent implements OnInit {
         }
       });
   }
-  
+
   onSubmit(): void {
+
     if (this.languageForm.valid) {
       const formData = this.GSD.globalFunction.convertToFormdata(this.languageForm);
-      
+
       this.GSD.globalRouting.api('crud', 'insert_update_operation', formData,
         (res: any) => {
           if (res.statusCode == 200) {
             this.GSD.global.toast(res.message, 'success');
             this.resetForm();
             this.loadLanguages();
-            
+
             // Switch to all languages tab
             const allLanguagesTab = document.getElementById('all-languages-tab');
             if (allLanguagesTab) {
@@ -114,13 +120,13 @@ export class LanguageMasterComponent implements OnInit {
       this.languageForm.markAllAsTouched();
     }
   }
-  
+
   editLanguage(id: number): void {
     const formData = new FormData();
     formData.append('id', id.toString());
     formData.append('action', 'edit');
     formData.append('table_name', 'language_master');
-    
+
     this.GSD.globalRouting.api('crud', 'get_edit_data', formData,
       (res: any) => {
         if (res.statusCode == 200) {
@@ -131,7 +137,7 @@ export class LanguageMasterComponent implements OnInit {
             language_code: res.data.language_code,
             action: 'update'
           });
-          
+
           // Switch to add/edit tab
           const addLanguageTab = document.getElementById('add-language-tab');
           if (addLanguageTab) {
@@ -143,14 +149,14 @@ export class LanguageMasterComponent implements OnInit {
         }
       });
   }
-  
+
   deleteLanguage(id: number): void {
     if (confirm('Are you sure you want to delete this language?')) {
       const formData = new FormData();
       formData.append('id', id.toString());
       formData.append('action', 'delete');
       formData.append('table_name', 'language_master');
-      
+
       this.GSD.globalRouting.api('crud', 'delete_data', formData,
         (res: any) => {
           if (res.statusCode == 200) {
@@ -162,7 +168,7 @@ export class LanguageMasterComponent implements OnInit {
         });
     }
   }
-  
+
   resetForm(): void {
     this.languageForm.reset({
       action: 'insert',
@@ -170,13 +176,13 @@ export class LanguageMasterComponent implements OnInit {
     });
     this.isEditMode = false;
   }
-  
+
   applyFilter(): void {
     this.currentPage = 1;
     this.filterForm.patchValue({ current_page: 1 });
     this.loadLanguages();
   }
-  
+
   resetFilter(): void {
     this.filterForm.patchValue({
       language_name: '',
@@ -188,7 +194,7 @@ export class LanguageMasterComponent implements OnInit {
     });
     this.loadLanguages();
   }
-  
+
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
@@ -201,7 +207,7 @@ export class LanguageMasterComponent implements OnInit {
     const select = event.target as HTMLSelectElement;
     const newLimit = parseInt(select.value);
     this.recordsPerPage = newLimit;
-    this.filterForm.patchValue({ 
+    this.filterForm.patchValue({
       limit: newLimit,
       current_page: 1
     });

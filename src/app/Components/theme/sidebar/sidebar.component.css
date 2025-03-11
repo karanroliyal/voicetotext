@@ -327,7 +327,7 @@
   }
   
   /* Overlay when sidebar is open on mobile */
-  .sidebar-overlay {
+  /* .sidebar-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -336,7 +336,7 @@
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 980;
-  }
+  } */
   
   .sidebar-overlay.show {
     display: block;

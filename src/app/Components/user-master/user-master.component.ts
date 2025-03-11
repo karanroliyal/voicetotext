@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { globalServicesDecorator } from '../../Services/global-services.decorator';
@@ -25,11 +25,13 @@ export class UserMasterComponent implements OnInit {
   totalPages: number = 0;
   recordsPerPage: number = 4;
   Math = Math;
-  
-  constructor(private GSD: globalServicesDecorator) {
+  permission:any;
+
+  constructor(private GSD: globalServicesDecorator ,  private cdr: ChangeDetectorRef) {
+    
     this.initializeForms();
   }
-  
+
   private initializeForms(): void {
     this.userForm = new FormGroup({
       id: new FormControl(''),
@@ -40,7 +42,7 @@ export class UserMasterComponent implements OnInit {
       action: new FormControl('insert'),
       table_name: new FormControl('user_master')
     });
-    
+
     this.filterForm = new FormGroup({
       user_name: new FormControl(''),
       user_email: new FormControl(''),
@@ -54,26 +56,31 @@ export class UserMasterComponent implements OnInit {
       table_name: new FormControl('user_master')
     });
   }
-  
+
   ngOnInit(): void {
-    this.loadUsers();
+   
     this.checkPermissions();
+    this.loadUsers();
     this.setupTabListeners();
   }
-  
+
+  checkPermissions(): void {
+    this.GSD.globalRouting.checkPermissions('user_master', () => {
+      // Set permissions for UI elements
+      this.permission = this.GSD.globalRouting.permissions;
+      this.cdr.detectChanges();
+    });
+    
+  }
+
   private setupTabListeners(): void {
     // Add event listener for tab changes
     document.getElementById('all-users-tab')?.addEventListener('shown.bs.tab', () => {
       this.resetForm();
     });
   }
-  
-  checkPermissions(): void {
-    this.GSD.globalRouting.checkPermissions('user_master', () => {
-      // Set permissions for UI elements
-    });
-  }
-  
+
+
   loadUsers(): void {
     const formValues = {
       user_name: this.filterForm.get('user_name')?.value || '',
@@ -84,13 +91,13 @@ export class UserMasterComponent implements OnInit {
       sortOrder: this.filterForm.get('sortOrder')?.value || 'DESC',
       current_page: this.filterForm.get('current_page')?.value || 1,
       fields: this.filterForm.get('fields')?.value || 'id,user_name,user_email,phone_no',
-      action: 'get_records',
+      action: 'get table',
       table_name: 'user_master'
     };
-    
+
     const formData = this.GSD.globalFunction.convertToFormdata(formValues);
-    
-    this.GSD.globalRouting.api('crud', 'table_creator', formData, 
+
+    this.GSD.globalRouting.api('crud', 'table_creator', formData,
       (res: any) => {
         if (res.records !== undefined) {
           this.users = res.records;
@@ -110,11 +117,11 @@ export class UserMasterComponent implements OnInit {
         }
       });
   }
-  
+
   onSubmit(): void {
     if (this.userForm.valid) {
       const formData = this.GSD.globalFunction.convertToFormdata(this.userForm.value);
-      
+
       this.GSD.globalRouting.api('crud', 'insert_update_operation', formData,
         (res: any) => {
           if (res.statusCode == 200) {
@@ -122,11 +129,11 @@ export class UserMasterComponent implements OnInit {
             this.resetForm();
             this.loadUsers();
             // Switch to home tab
-          const addUserTab = document.getElementById('all-users-tab');
-          if (addUserTab) {
-            const tab = new bootstrap.Tab(addUserTab);
-            tab.show();
-          }
+            const addUserTab = document.getElementById('all-users-tab');
+            if (addUserTab) {
+              const tab = new bootstrap.Tab(addUserTab);
+              tab.show();
+            }
           } else {
             this.GSD.global.toast(res.message, 'danger');
           }
@@ -135,7 +142,7 @@ export class UserMasterComponent implements OnInit {
       this.userForm.markAllAsTouched();
     }
   }
-  
+
   editUser(id: number): void {
     const formData = new FormData();
     formData.append('id', id.toString());
@@ -144,7 +151,7 @@ export class UserMasterComponent implements OnInit {
 
     this.userForm.controls['password'].setValidators([Validators.minLength(8), Validators.maxLength(20)])
     this.userForm.controls['password'].updateValueAndValidity();
-    
+
     this.GSD.globalRouting.api('crud', 'get_edit_data', formData,
       (res: any) => {
         if (res.statusCode == 200) {
@@ -156,7 +163,7 @@ export class UserMasterComponent implements OnInit {
             phone_no: res.data.phone_no,
             action: 'update'
           });
-          
+
           // Switch to add/edit tab
           const addUserTab = document.getElementById('add-user-tab');
           if (addUserTab) {
@@ -168,14 +175,14 @@ export class UserMasterComponent implements OnInit {
         }
       });
   }
-  
+
   deleteUser(id: number): void {
     if (confirm('Are you sure you want to delete this user?')) {
       const formData = new FormData();
       formData.append('id', id.toString());
       formData.append('action', 'delete');
       formData.append('table_name', 'user_master');
-      
+
       this.GSD.globalRouting.api('crud', 'delete_data', formData,
         (res: any) => {
           if (res.statusCode == 200) {
@@ -187,7 +194,7 @@ export class UserMasterComponent implements OnInit {
         });
     }
   }
-  
+
   resetForm(): void {
     this.userForm.reset({
       action: 'insert',
@@ -195,12 +202,12 @@ export class UserMasterComponent implements OnInit {
     });
     this.isEditMode = false;
   }
-  
+
   applyFilter(): void {
     this.filterForm.patchValue({ current_page: 1 });
     this.loadUsers();
   }
-  
+
   resetFilter(): void {
     this.filterForm.patchValue({
       user_name: '',
@@ -210,21 +217,21 @@ export class UserMasterComponent implements OnInit {
     });
     this.loadUsers();
   }
-  
+
   changePage(page: number): void {
     this.filterForm.patchValue({ current_page: page });
     this.loadUsers();
   }
-  
+
   refreshData(): void {
     this.loadUsers();
   }
-  
+
   onLimitChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const newLimit = parseInt(select.value);
     this.recordsPerPage = newLimit;
-    this.filterForm.patchValue({ 
+    this.filterForm.patchValue({
       limit: newLimit,
       current_page: 1
     });
