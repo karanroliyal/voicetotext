@@ -51,24 +51,7 @@ export class GlobalRoutingService {
 
   api(controllerName: any, method: any, data: any = {}, callback: Function) {
 
-    let headers = new HttpHeaders({
-      'Accept': 'application/json',
-    });
-
-
-    const token = this.getFromLocalStorage('token');
-
-    if (token && controllerName != 'login') {
-      headers = headers.set('Authorization', `Bearer ${token}`);
-      headers = headers.set('myurl', this.router.url.split('/')[2]);
-    }
-
-
-    let httpOptions = { headers };
-
-    // console.log('Headers:', headers.keys()); // Debugging
-
-    var response = this.http.post(serverURL + controllerName + '/' + method, data, httpOptions);
+    var response = this.http.post(serverURL + controllerName + '/' + method, data);
     response.subscribe({
       next: (res: any) => {
         if (res.statusCode == 401) {
@@ -79,7 +62,6 @@ export class GlobalRoutingService {
         }
       },
       error: (error) => {
-        // console.error('API Error:', error); // Debugging
         if (error.status === 401) {
           this.clearStorangeData();
           this.router.navigate(['log-In']);

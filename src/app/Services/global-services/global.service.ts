@@ -54,17 +54,17 @@ export class GlobalService {
   }
 
   logout(local_permission: any) {
+    let formData = new FormData();
+    formData.append('table_name' , 'user_master');
+    formData.append('action' , 'logout');
+    this.globalRouting.api('login' , 'logout_log' , formData , (res:any)=>{
+      console.log(res , 'response of logout');
+    } )
     if (local_permission == 'clear') {
       localStorage.clear();
       sessionStorage.clear();
       this.router.navigate(['log-In']);
     }
-    let formData = new FormData();
-    formData.append('table_name' , 'user_master');
-    formData.append('action' , 'logout');
-    this.globalRouting.api('login' , 'logout_log' , formData , (res:any)=>{
-      // console.log(res , 'logout log');
-    } )
   }
 
   masterList(data:{},controllerName:string,functionName:string){

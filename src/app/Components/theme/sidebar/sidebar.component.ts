@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { globalServicesDecorator } from '../../../Services/global-services.decorator';
-import { RouterLink , RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgClass } from '@angular/common';
 
 interface menuData {
@@ -16,7 +16,7 @@ interface menuData {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, NgClass , RouterLinkActive],
+  imports: [RouterLink, NgClass, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
@@ -28,17 +28,24 @@ export class SidebarComponent implements OnInit {
   parents_menu: any = [];
   isMobileOpen: boolean = false;
 
-  constructor(public GSD: globalServicesDecorator) {}
+  constructor(public GSD: globalServicesDecorator) { }
 
 
   menu_array: menuData[] = [{ menu_name: '', priority: '', route: '', icon_class: '', parent_id: '', id: '' }];
-  
+
   ngOnInit(): void {
-    setTimeout(()=>{
+    setTimeout(() => {
       this.get_menu();
       this.loadMenu();
-    } , 200)
-    
+    }, 200);
+
+    // For dropdown state 
+    const savedState = JSON.parse(localStorage.getItem('sidebarState') || '{}');
+    setTimeout(()=>{
+      this.parents_menu.forEach((parent: any) => {
+        parent.isOpen = savedState[parent.id] ?? false;
+      });
+    }, 300)
   }
 
   get_menu() {
@@ -48,20 +55,23 @@ export class SidebarComponent implements OnInit {
       return;
     }
     this.menu_array = JSON.parse(menu);
-    // console.log(this.menu_array, 'my menu array');
   }
 
   loadMenu() {
     this.parents_menu = this.menu_array.filter((ele) => ele.parent_id === "0").map((parent) => ({
-        ...parent,
-        children: this.menu_array.filter((child) => child.parent_id === parent.id)
-      }));
-      // console.log(this.parents_menu ,  ' my parent menu')
+      ...parent,
+      children: this.menu_array.filter((child) => child.parent_id === parent.id)
+    }));
   }
 
 
   toggleDropdown(parent: any) {
     parent.isOpen = !parent.isOpen;
+
+    const savedState = JSON.parse(localStorage.getItem('sidebarState') || '{}');
+    savedState[parent.id] = parent.isOpen;
+    localStorage.setItem('sidebarState', JSON.stringify(savedState));
+
   }
 
   toggleMobileSidebar(): void {
@@ -84,7 +94,7 @@ export class SidebarComponent implements OnInit {
     }
   }
 
- 
+
 
 }
 

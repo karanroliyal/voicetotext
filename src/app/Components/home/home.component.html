@@ -1,4 +1,72 @@
-<div >
+<div class="container-fluid">
 
-   
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form [formGroup]="voiceForm">
+                <div class="row g-3">
+                    <div class="col-12 col-md-12">
+                        <h3>Text to speech <i class="bi bi-volume-up-fill"></i></h3>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <label for="messageId" class="mb-2">Message</label>
+                        <div class="search-box">
+                            <textarea id="messageId" type="text" rows="4" class="form-control"
+                                placeholder="Enter your message..." formControlName="message"></textarea>
+                                <app-form-validation-messages [control]="voiceForm.get('message')" [name]="'Message'" ></app-form-validation-messages>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="SelectGenderId" class="mb-2">Select langaugae <i class="bi bi-translate"></i></label>
+                        <div class="search-box">
+                            <select formControlName="language_name" (change)="setGender(selectedLanguage.value) ; setVoice(selectedGender.value ,selectedLanguage.value )" #selectedLanguage id="SelectGenderId" type="text" class="form-select">
+                                <option value="">-- select language --</option>
+                                @for(language of languageList ; track $index){
+                                    <option id={{language.id}} value={{language.language_name}}>{{language.language_name}}</option>
+                                }
+                            </select>
+                            <app-form-validation-messages [control]="voiceForm.get('language_name')" [name]="'Language'" ></app-form-validation-messages>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="SelectGenderId" class="mb-2">Select gender <i class="bi bi-gender-ambiguous"></i></label>
+                        <div class="search-box">
+                            <select formControlName="voice_gender" (change)="setVoice(selectedGender.value ,selectedLanguage.value )" #selectedGender id="SelectGenderId" type="text" class="form-select">
+                                <option value="">-- select gender --</option>
+                                @for(gender of genderList ; track $index){
+                                    <option value={{gender.value}}>{{gender.gender}}</option>
+                                }
+                            </select>
+                            <app-form-validation-messages [control]="voiceForm.get('voice_gender')" [name]="'Gender'" ></app-form-validation-messages>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="SelectVoiceId" class="mb-2">Select voice <i class="bi bi-mic"></i></label>
+                        <div class="search-box">
+                            <select formControlName="voice_name" id="SelectVoiceId" type="text" class="form-select">
+                                <option value="">-- select voice --</option>
+                                @for(voice of voiceList ; track $index){
+                                    <option value={{voice.id}}>{{voice.voice_name}}</option>
+                                }@empty {
+                                    <option value="">No voice for this langauge and gender</option>
+                                }
+                            </select>
+                            <app-form-validation-messages [control]="voiceForm.get('voice_name')" [name]="'Voice'" ></app-form-validation-messages>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12 d-flex gap-2">
+                        <button type="submit" (click)="convertMessage()" class="btn btn-primary">
+                            <i class="bi bi-soundwave"></i> Convert
+                        </button>
+                        <button type="reset" class="btn btn-secondary" (click)="resetForm()">
+                            <i class="bi bi-x-circle me-2"></i>Reset
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
 </div>

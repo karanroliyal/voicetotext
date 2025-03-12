@@ -38,7 +38,7 @@ export class UserPermissionComponent implements OnInit {
   permission: any;
   user_permission_data: Permission[] = [{ menu_id: 1, menu_name: '', add_rights: '', view_rights: '', delete_rights: '', update_rights: '' }]
 
-  constructor(private GSD: globalServicesDecorator ,  private cdr: ChangeDetectorRef) {
+  constructor(private GSD: globalServicesDecorator, private cdr: ChangeDetectorRef) {
   }
 
 
@@ -53,9 +53,7 @@ export class UserPermissionComponent implements OnInit {
       // Set permissions for UI elements
       this.permission = this.GSD.globalRouting.permissions;
       this.cdr.detectChanges();
-      console.log(this.permission);
     });
-    
   }
 
   permissionForm = new FormGroup({
@@ -154,27 +152,25 @@ export class UserPermissionComponent implements OnInit {
     formData.append('action', 'set user right');
     formData.append('table_name', 'user_rights');
 
-    formData.append('user_id' , this.selectedId)
+    formData.append('user_id', this.selectedId)
     formData.append('data', JSON.stringify(this.permissionForm.value));
 
     this.GSD.globalRouting.api('user_rights', 'set_user_rights', formData, (res: any) => {
 
-      if(res.statusCode == 200){
+      if (res.statusCode == 200) {
         this.GSD.global.toast(res.message, 'success');
-      }else{
+      } else {
         this.GSD.global.toast(res.message, 'danger');
       }
 
-      }
+    }
     )
   }
-  
+
 
   // reset form fileds
   resetPermissions() {
-    // const permissionArray = this.User_permission.get('permission_fields') as FormArray;
     const permission_array = this.permissionForm.get('permission_data') as FormArray;
-  
     permission_array.controls.forEach((permissionForm) => {
       permissionForm.patchValue({
         add_rights: false,
@@ -185,6 +181,30 @@ export class UserPermissionComponent implements OnInit {
     });
   }
 
+  // Allow all rights 
+  allowAllRights(event: Event) {
+    const input = event.target as HTMLInputElement;
+    // console.log('Checkbox state:', input.checked);
+    if (input.checked) {
+      this.tickAll();
+    }else{
+      this.resetPermissions();
+    }
+
+  }
+
+  // tick all 
+  tickAll(){
+    const permission_array = this.permissionForm.get('permission_data') as FormArray;
+    permission_array.controls.forEach((permissionForm) => {
+      permissionForm.patchValue({
+        add_rights: true,
+        delete_rights: true,
+        update_rights: true,
+        view_rights: true
+      });
+    });
+  }
 
 
 }

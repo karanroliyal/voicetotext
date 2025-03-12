@@ -7,6 +7,13 @@ import { PagginationComponent } from '../../Utility/paggination/paggination.comp
 
 declare var bootstrap: any;
 
+interface permissionObject {
+  add_rights :number,
+  view_rights : number,
+  update_rights : number,
+  delete_rights : number,
+}
+
 @Component({
   selector: 'app-user-master',
   standalone: true,
@@ -25,7 +32,7 @@ export class UserMasterComponent implements OnInit {
   totalPages: number = 0;
   recordsPerPage: number = 4;
   Math = Math;
-  permission:any;
+  permission: permissionObject = {add_rights: 0 , view_rights: 0 , update_rights:0 , delete_rights:0};
 
   constructor(private GSD: globalServicesDecorator ,  private cdr: ChangeDetectorRef) {
     
@@ -71,6 +78,23 @@ export class UserMasterComponent implements OnInit {
       this.cdr.detectChanges();
     });
     
+  }
+
+  // For sorting the table 
+  sortOrder = "DESC";
+  sortingTable(sortOn:string){
+
+    if(this.sortOrder == "DESC"){
+      this.sortOrder = "ASC";
+    }else{
+      this.sortOrder = "DESC";
+    }
+
+    this.filterForm.controls['sortOrder'].setValue(this.sortOrder);
+    this.filterForm.controls['sortOn'].setValue(sortOn);
+
+    this.loadUsers();
+
   }
 
   private setupTabListeners(): void {
@@ -237,4 +261,6 @@ export class UserMasterComponent implements OnInit {
     });
     this.loadUsers();
   }
+
+  
 }

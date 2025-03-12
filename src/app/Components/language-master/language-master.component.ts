@@ -7,6 +7,13 @@ import { PagginationComponent } from '../../Utility/paggination/paggination.comp
 
 declare var bootstrap: any;
 
+interface permissionObject {
+  add_rights :number,
+  view_rights : number,
+  update_rights : number,
+  delete_rights : number,
+}
+
 @Component({
   selector: 'app-language-master',
   standalone: true,
@@ -23,15 +30,17 @@ export class LanguageMasterComponent implements OnInit {
   recordsPerPage: number = 4;
   Math = Math;
   res: any;
-  permission: any;
- 
+  permission: permissionObject = {add_rights: 0 , view_rights: 0 , update_rights:0 , delete_rights:0};
 
-  constructor(private GSD: globalServicesDecorator  ,  private cdr: ChangeDetectorRef) {
+
+  constructor(private GSD: globalServicesDecorator, private cdr: ChangeDetectorRef) {
   }
   languageForm = new FormGroup({
     id: new FormControl(''),
     language_name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(40)]),
     language_code: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(5)]),
+    voice_gender: new FormControl('' , [Validators.required]),
+    voice_name: new FormControl('' , [Validators.required , Validators.minLength(2) , Validators.maxLength(30)]),
     action: new FormControl('insert'),
     table_name: new FormControl('language_master')
   });
@@ -44,7 +53,7 @@ export class LanguageMasterComponent implements OnInit {
     limit: new FormControl(this.recordsPerPage),
     sortOrder: new FormControl('DESC'),
     current_page: new FormControl(1),
-    fields: new FormControl('id , language_name , language_code'),
+    fields: new FormControl('id , language_name , language_code , voice_name , voice_gender'),
     table_name: new FormControl('language_master'),
     action: new FormControl('get table')
   });
@@ -56,7 +65,22 @@ export class LanguageMasterComponent implements OnInit {
     this.checkPermissions();
   }
 
+  // For sorting the table 
+  sortOrder = "DESC";
+  sortingTable(sortOn: string) {
 
+    if (this.sortOrder == "DESC") {
+      this.sortOrder = "ASC";
+    } else {
+      this.sortOrder = "DESC";
+    }
+
+    this.filterForm.controls['sortOrder'].setValue(this.sortOrder);
+    this.filterForm.controls['sortOn'].setValue(sortOn);
+
+    this.loadLanguages();
+
+  }
 
   private setupTabListeners(): void {
     // Add event listener for tab changes
@@ -135,8 +159,12 @@ export class LanguageMasterComponent implements OnInit {
             id: res.data.id,
             language_name: res.data.language_name,
             language_code: res.data.language_code,
+            voice_name: res.data.voice_name,
+            voice_gender: res.data.voice_gender,
             action: 'update'
           });
+
+          // console.log
 
           // Switch to add/edit tab
           const addLanguageTab = document.getElementById('add-language-tab');

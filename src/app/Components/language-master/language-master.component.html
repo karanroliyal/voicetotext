@@ -81,10 +81,12 @@
               <table class="table table-hover align-middle mb-0">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>id</th>
-                    <th>Language Name</th>
-                    <th>Language Code</th>
+                    <th>Sno.</th>
+                    <th (click)="sortingTable('id')">id</th>
+                    <th (click)="sortingTable('language_name')">Language Name</th>
+                    <th (click)="sortingTable('language_code')">Language Code</th>
+                    <th (click)="sortingTable('language_code')">Voice gender</th>
+                    <th (click)="sortingTable('language_code')">Voice name</th>
                     <th class="text-end">Actions</th>
                   </tr>
                 </thead>
@@ -101,6 +103,8 @@
                       </div>
                     </td>
                     <td>{{ language.language_code }}</td>
+                    <td>{{ language.voice_gender }}</td>
+                    <td>{{ language.voice_name }}</td>
                     <td>
                       <div class="d-flex justify-content-end gap-2">
                         @if(this.permission.update_rights == 1){
@@ -148,12 +152,38 @@
                     [minlength]="2" [maxlength]="5"></app-form-validation-messages>
                 </div>
               </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Voice gender<span class="text-danger">*</span></label>
+                    <select formControlName="voice_gender" class="form-select form-select-sm">
+                      <option selected value="">-- select voice gender --</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  <app-form-validation-messages [control]="languageForm.get('voice_gender')" [name]="'Voice gender'"
+                    ></app-form-validation-messages>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Voice name<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" placeholder="sound name" formControlName="voice_name" maxlength="30" >
+                  <app-form-validation-messages [control]="languageForm.get('voice_name')" [name]="'Voice name'"
+                    [minlength]="2" [maxlength]="30"></app-form-validation-messages>
+                </div>
+              </div>
             </div>
             <div class="d-flex justify-content-end gap-2">
               <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
-              <button type="submit" class="btn btn-primary">
-                {{ isEditMode ? 'Update Language' : 'Add Language' }}
-              </button>
+              @if(isEditMode && permission.update_rights ==1){
+                <button type="submit" class="btn btn-primary">
+                  Update Language
+                </button>
+              }@else if( !isEditMode && permission.add_rights == 1){
+                <button type="submit" class="btn btn-primary">
+                  Add Language
+                </button>
+              }
             </div>
           </form>
         </div>

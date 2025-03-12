@@ -8,6 +8,26 @@
   position: relative;
 }
 
+/* Language Info */
+.language-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.language-flag {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3f6fff 0%, #2b4cca 100%);
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
 .search-box i {
   position: absolute;
   left: 10px;
@@ -168,6 +188,12 @@
     width: 35px;
     height: 35px;
   }
+
+  .language-flag {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 576px) {
@@ -183,6 +209,12 @@
     font-size: 0.875rem;
   }
   
+  .language-flag {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+
   .badge {
     font-size: 0.75rem;
   }

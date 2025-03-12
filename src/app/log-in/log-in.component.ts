@@ -41,7 +41,6 @@ export class LogInComponent {
               this.get_menu();
             },20)
           } else {
-            console.log('kshsdsd');
             this.GSD.global.toast(res.message, 'danger');
           }
         });
